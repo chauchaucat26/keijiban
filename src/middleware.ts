@@ -1,18 +1,6 @@
 import { auth0 } from "./lib/auth0";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
-    const host = request.headers.get("host");
-
-    const allowedHost = "chat.chauchaucat.f5.si";
-
-    // 🌐 ホスト制限
-    if (host !== allowedHost) {
-        return new NextResponse("Forbidden", { status: 403 });
-    }
-
-    // 🔐 Auth0 Middleware
+export async function middleware(request: Request) {
     return await auth0.middleware(request);
 }
 
