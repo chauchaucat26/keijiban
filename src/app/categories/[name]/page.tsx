@@ -3,6 +3,8 @@ import { ThreadList } from '@/components/thread-list'
 import { CategoryList } from '@/components/category-list'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 export const revalidate = 300
 
 export default async function CategoryPage({ params }: { params: Promise<{ name: string }> }) {

@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { adminLogin } from '@/app/actions/admin-auth'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
