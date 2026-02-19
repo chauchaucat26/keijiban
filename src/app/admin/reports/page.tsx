@@ -6,7 +6,7 @@ import { deletePost } from '@/app/actions/delete-post'
 import { adminLogout } from '@/app/actions/admin-auth'
 import { AdminNav } from '@/components/admin-nav'
 
-export const dynamic = 'force-dynamic'
+
 
 export default async function AdminReportsPage() {
     if (!(await isAdmin())) {

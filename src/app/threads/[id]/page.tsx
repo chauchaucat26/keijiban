@@ -8,7 +8,7 @@ import { generateAuthorId } from '@/lib/auth-id'
 import { isAdmin } from '@/app/actions/admin-auth'
 import { ManageButtons } from '@/components/manage-buttons'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60 // Refresh every minute for active threads
 
 export default async function ThreadPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params

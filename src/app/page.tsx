@@ -4,7 +4,7 @@ import { CategoryList } from '@/components/category-list'
 import { SearchBar } from '@/components/search-bar'
 import Link from 'next/link'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300 // 5 minutes ISR
 
 export default async function Home() {
     // Fetch latest threads

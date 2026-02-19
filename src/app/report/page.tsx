@@ -1,6 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
+
 
 import { createReport } from '@/app/actions/create-report'
 import { useSearchParams } from 'next/navigation'
