@@ -12,7 +12,7 @@ create table threads (
 create table posts (
   id uuid default gen_random_uuid() primary key,
   thread_id uuid references threads(id) on delete cascade not null,
-  name text default 'Anonymous',
+  name text default '名無し',
   message text not null,
   author_id text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
