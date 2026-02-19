@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { auth0 } from "@/lib/auth0";
 import { AdMax } from "@/components/ad-max";
+import { AdMaxOverlay } from "@/components/ad-max-overlay";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -59,6 +60,7 @@ export default async function RootLayout({
                         </div>
                     </footer>
                 </div>
+                <AdMaxOverlay />
             </body>
         </html >
     );
