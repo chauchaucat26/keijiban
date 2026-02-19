@@ -1,0 +1,19 @@
+笆ｲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+笨・Compiled successfully in 2.9s
+  Running TypeScript ...
+Failed to compile.
+
+.next/dev/types/validator.ts:161:39
+Type error: Cannot find module '../../../src/app/api/auth/[auth0]/route.js' or its corresponding type declarations.
+
+  159 | {
+  160 |   type __IsExpected<Specific extends RouteHandlerConfig<"/api/auth/[auth0]">> = Specific
+> 161 |   const handler = {} as typeof import("../../../src/app/api/auth/[auth0]/route.js")
+      |                                       ^
+  162 |   type __Check = __IsExpected<typeof handler>
+  163 |   // @ts-ignore
+  164 |   type __Unused = __Check
+Next.js build worker exited with code: 1 and signal: null
