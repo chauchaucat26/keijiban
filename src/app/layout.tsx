@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { auth0 } from "@/lib/auth0";
 import { AdMax } from "@/components/ad-max";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -11,18 +12,34 @@ export const metadata: Metadata = {
     description: "シンプルな雑談掲示板サイト",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const session = await auth0.getSession();
+
     return (
         <html lang="ja">
             <body className={cn(inter.className, "bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 min-h-screen")}>
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <header className="mb-8 flex justify-between items-center">
                         <h1 className="text-2xl font-bold tracking-tight">雑談掲示板</h1>
-                        <nav>
+                        <nav className="flex items-center gap-4">
+                            {session ? (
+                                <div className="flex items-center gap-3">
+                                    <span className="text-sm text-zinc-500 hidden sm:inline">
+                                        {session.user.name}さん
+                                    </span>
+                                    <a href="/auth/logout" className="text-sm text-zinc-500 hover:text-red-500 transition-colors">
+                                        ログアウト
+                                    </a>
+                                </div>
+                            ) : (
+                                <a href="/auth/login" className="text-sm text-zinc-500 hover:text-blue-600 transition-colors">
+                                    ログイン
+                                </a>
+                            )}
                             <a href="/create" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
                                 スレ作成
                             </a>

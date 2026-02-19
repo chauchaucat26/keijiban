@@ -2,23 +2,35 @@
 
 import { createThread } from '@/app/actions/create-thread'
 import { CATEGORIES } from '@/lib/constants'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 
 export default function CreateThreadPage() {
-    const formRef = useRef<HTMLFormElement>(null)
+    const [name, setName] = useState('')
+    const [title, setTitle] = useState('')
+    const [category, setCategory] = useState(CATEGORIES[0])
+    const [message, setMessage] = useState('')
     const [error, setError] = useState<string | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
+
+    // Load name from localStorage
+    useEffect(() => {
+        const savedName = localStorage.getItem('saved_name')
+        if (savedName) {
+            setName(savedName)
+        }
+    }, [])
 
     async function handleSubmit(formData: FormData) {
         setIsSubmitting(true)
         setError(null)
 
         // Client side basic validation
-        const title = formData.get('title') as string
-        const message = formData.get('message') as string
+        const submittedName = formData.get('name') as string
+        const submittedTitle = formData.get('title') as string
+        const submittedMessage = formData.get('message') as string
 
-        if (!title.trim() || !message.trim()) {
+        if (!submittedTitle.trim() || !submittedMessage.trim()) {
             setError('タイトルと本文を入力してください')
             setIsSubmitting(false)
             return
@@ -28,8 +40,11 @@ export default function CreateThreadPage() {
         if (result?.error) {
             setError(result.error)
             setIsSubmitting(false)
+        } else {
+            // Success
+            localStorage.setItem('saved_name', submittedName)
+            // Redirect happens automatically in createThread
         }
-        // Success will redirect, so no need to set isSubmitting(false)
     }
 
     return (
@@ -45,7 +60,7 @@ export default function CreateThreadPage() {
                     </div>
                 )}
 
-                <form action={handleSubmit} ref={formRef} className="space-y-6">
+                <form action={handleSubmit} className="space-y-6">
 
                     <div>
                         <label htmlFor="category" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
@@ -54,9 +69,10 @@ export default function CreateThreadPage() {
                         <select
                             name="category"
                             id="category"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
                             required
                             className="w-full rounded-md border text-zinc-800 dark:bg-zinc-800 dark:border-zinc-700 border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-                            defaultValue={CATEGORIES[0]}
                         >
                             {CATEGORIES.map((cat) => (
                                 <option key={cat} value={cat}>
@@ -74,6 +90,8 @@ export default function CreateThreadPage() {
                             type="text"
                             name="title"
                             id="title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
                             required
                             maxLength={100}
                             placeholder="わかりやすいタイトルを入力"
@@ -89,6 +107,8 @@ export default function CreateThreadPage() {
                             type="text"
                             name="name"
                             id="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             placeholder="名無しさん"
                             maxLength={30}
                             className="w-full rounded-md border text-zinc-800 dark:bg-zinc-800 dark:border-zinc-700 border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
@@ -102,8 +122,11 @@ export default function CreateThreadPage() {
                         <textarea
                             name="message"
                             id="message"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
                             required
                             rows={8}
+                            maxLength={200}
                             placeholder="HTMLやMarkdownは使えません。改行は反映されます。"
                             className="w-full rounded-md border text-zinc-800 dark:bg-zinc-800 dark:border-zinc-700 border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm resize-y"
                         />

@@ -3,6 +3,10 @@ import { formatDate } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ReplyForm } from '@/components/reply-form'
+import { headers } from 'next/headers'
+import { generateAuthorId } from '@/lib/auth-id'
+import { isAdmin } from '@/app/actions/admin-auth'
+import { ManageButtons } from '@/components/manage-buttons'
 
 export const revalidate = 60 // Refresh every minute for active threads
 
@@ -23,6 +27,13 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
         .select('*')
         .eq('thread_id', id)
         .order('created_at', { ascending: true })
+
+    // Auth Info
+    const headerList = await headers()
+    const ip = headerList.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1'
+    const currentAuthorId = await generateAuthorId(ip)
+    const isUserAdmin = await isAdmin()
+    const threadOwnerId = posts?.[0]?.author_id
 
     return (
         <div>
@@ -50,6 +61,12 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                                 <span className="font-bold text-zinc-800 dark:text-zinc-200">
                                     {post.name || 'Anonymous'}
                                 </span>
+                                <span className="text-[10px] sm:text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-500 font-mono">
+                                    ID:{post.author_id || '????'}
+                                </span>
+                                {post.author_id === threadOwnerId && (
+                                    <span className="text-[10px] sm:text-xs text-blue-500 font-bold ml-1">★</span>
+                                )}
                             </div>
                             <span className="text-xs text-zinc-400">
                                 {formatDate(post.created_at)}
@@ -58,10 +75,16 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                         <div className="whitespace-pre-wrap text-zinc-700 dark:text-zinc-300 leading-relaxed break-words mb-4">
                             {post.message}
                         </div>
-                        <div className="flex justify-end">
+                        <div className="flex justify-between items-center group">
+                            <ManageButtons
+                                postId={post.id}
+                                threadId={id}
+                                isOwner={currentAuthorId === threadOwnerId}
+                                isAdmin={isUserAdmin}
+                            />
                             <Link
                                 href={`/report?post_id=${post.id}`}
-                                className="text-xs text-zinc-400 hover:text-red-500 flex items-center gap-1 transition-colors"
+                                className="text-xs text-zinc-400 hover:text-red-500 flex items-center gap-1 transition-colors ml-auto"
                                 title="この投稿を通報する"
                             >
                                 <span className="text-xs">⚠️</span> 通報

@@ -11,6 +11,7 @@ export type Post = {
     thread_id: string
     name: string
     message: string
+    author_id: string
     created_at: string
     updated_at: string
 }
