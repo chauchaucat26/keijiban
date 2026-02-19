@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     description: "シンプルな雑談掲示板サイト",
 };
 
+export const runtime = 'edge';
+
+
 export default async function RootLayout({
     children,
 }: Readonly<{
