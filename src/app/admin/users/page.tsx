@@ -6,6 +6,8 @@ import { AdminNav } from '@/components/admin-nav'
 import { headers } from 'next/headers'
 import { generateAuthorId } from '@/lib/auth-id'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminUsersPage() {
     if (!(await isAdmin())) {
         redirect('/admin/login')

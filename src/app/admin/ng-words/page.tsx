@@ -5,6 +5,8 @@ import { formatDate } from '@/lib/utils'
 import { AdminNav } from '@/components/admin-nav'
 import { addNgWord, deleteNgWord } from '@/app/actions/ng-words'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminNgWordsPage() {
     if (!(await isAdmin())) {
         redirect('/admin/login')
