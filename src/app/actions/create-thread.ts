@@ -25,6 +25,21 @@ export async function createThread(formData: FormData) {
     const ip = headerList.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1'
     const authorId = await generateAuthorId(ip)
 
+    // BAN Check (Global only for thread creation)
+    const { data: bans, error: banCheckError } = await supabase
+        .from('bans')
+        .select('*')
+        .eq('author_id', authorId)
+        .is('thread_id', null)
+
+    if (banCheckError) {
+        console.error(banCheckError)
+    }
+
+    if (bans && bans.length > 0) {
+        return { error: '現在この掲示板への書き込みが制限されています' }
+    }
+
     const isAllowed = await checkRateLimit('threads', authorId, 300)
     if (!isAllowed) {
         return { error: 'スレッド作成は5分に1回までです' }

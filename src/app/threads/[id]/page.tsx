@@ -81,6 +81,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                                 <ManageButtons
                                     postId={post.id}
                                     threadId={id}
+                                    authorId={post.author_id || ''}
                                     isOwner={currentAuthorId === threadOwnerId}
                                     isAdmin={isUserAdmin}
                                 />

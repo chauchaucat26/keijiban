@@ -23,6 +23,21 @@ export async function createPost(formData: FormData) {
     const ip = headerList.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1'
     const authorId = await generateAuthorId(ip)
 
+    // BAN Check
+    const { data: bans, error: banCheckError } = await supabase
+        .from('bans')
+        .select('*')
+        .eq('author_id', authorId)
+        .or(`thread_id.is.null,thread_id.eq.${threadId}`)
+
+    if (banCheckError) {
+        console.error(banCheckError)
+    }
+
+    if (bans && bans.length > 0) {
+        return { error: '現在この掲示板またはスレッドへの書き込みが制限されています' }
+    }
+
     // Rate Limit
     const isAllowed = await checkRateLimit('posts', authorId, 10)
     if (!isAllowed) {

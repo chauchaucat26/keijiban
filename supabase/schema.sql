@@ -39,3 +39,16 @@ create table ng_words (
   word text unique not null,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+-- Create bans table
+create table bans (
+  id uuid default gen_random_uuid() primary key,
+  author_id text not null,
+  thread_id uuid references threads(id) on delete cascade, -- NULL = Global BAN
+  reason text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Create index for bans
+create index bans_author_id_idx on bans(author_id);
+create index bans_thread_id_idx on bans(thread_id);
