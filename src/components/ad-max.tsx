@@ -47,6 +47,7 @@ export function AdMax() {
                     strategy="afterInteractive"
                     async
                     charSet="utf-8"
+                    data-cfasync="false"
                 />
             </div>
         </div>

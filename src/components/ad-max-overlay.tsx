@@ -35,6 +35,7 @@ export function AdMaxOverlay() {
                 strategy="afterInteractive"
                 async
                 charSet="utf-8"
+                data-cfasync="false"
             />
             {/* admax */}
         </>
