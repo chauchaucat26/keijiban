@@ -21,13 +21,29 @@ export function AdMaxInFeed() {
     const width = isMobile ? '320' : '728';
     const height = isMobile ? '100' : '90';
 
+    const srcDoc = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>body { margin: 0; padding: 0; overflow: hidden; }</style>
+        </head>
+        <body>
+            <div class="admax-ads" data-admax-id="${adId}" style="display:inline-block;width:${width}px;height:${height}px;"></div>
+            <script type="text/javascript">
+                (window.admaxads = window.admaxads || []).push({admax_id: "${adId}", type: "banner"});
+            </script>
+            <script type="text/javascript" src="https://adm.shinobi.jp/st/t.js" async charset="utf-8"></script>
+        </body>
+        </html>
+    `;
+
     return (
         <div className="flex justify-center my-6 overflow-hidden min-h-[90px]">
             <div className="flex flex-col items-center">
-                {/* admax iframe */}
+                {/* admax script-in-iframe */}
                 <iframe
                     key={`ad-infeed-${adId}-${isMobile}`}
-                    src={`https://adm.shinobi.jp/st/s.html?id=${adId}`}
+                    srcDoc={srcDoc}
                     width={width}
                     height={height}
                     frameBorder="0"
