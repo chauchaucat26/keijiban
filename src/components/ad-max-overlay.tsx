@@ -2,7 +2,9 @@
 
 import Script from 'next/script'
 
-export function AdMaxOverlay() {
+export function AdMaxOverlay({ isMobile }: { isMobile?: boolean }) {
+    if (!isMobile) return null;
+
     const adId = process.env.NEXT_PUBLIC_ADMAX_OVERLAY_ID || '94df3ac80b7623155174e23d8e0b01ba';
 
     return (

@@ -6,6 +6,8 @@ import { auth0 } from "@/lib/auth0";
 import { AdMax } from "@/components/ad-max";
 import { AdMaxOverlay } from "@/components/ad-max-overlay";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { headers } from "next/headers";
+import { isMobileDevice } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +23,9 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const session = await auth0.getSession();
+    const headersList = await headers();
+    const userAgent = headersList.get('user-agent') || "";
+    const isMobile = isMobileDevice(userAgent);
 
     return (
         <html lang="ja" suppressHydrationWarning>

@@ -1,19 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
-export function AdMaxInFeed() {
-    const [isMobile, setIsMobile] = useState(false)
-
-    useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768)
-        }
-        checkMobile()
-        window.addEventListener('resize', checkMobile)
-        return () => window.removeEventListener('resize', checkMobile)
-    }, [])
-
+export function AdMaxInFeed({ isMobile }: { isMobile?: boolean }) {
     const adId = isMobile
         ? (process.env.NEXT_PUBLIC_ADMAX_IN_FEED_SP_ID || '9502b5a3bbcb7abcb6925906064353c5')
         : (process.env.NEXT_PUBLIC_ADMAX_IN_FEED_PC_ID || '9502b5a3bbcb7abcb6925906064353c5');
@@ -43,7 +30,7 @@ export function AdMaxInFeed() {
             <div className="flex flex-col items-center">
                 {/* admax script-in-iframe */}
                 <iframe
-                    key={`ad-infeed-${adId}-${isMobile}`}
+                    key={`ad-infeed-${adId}`}
                     srcDoc={srcDoc}
                     width={width}
                     height={height}
@@ -51,6 +38,7 @@ export function AdMaxInFeed() {
                     scrolling="no"
                     style={{ border: 'none', overflow: 'hidden' }}
                     referrerPolicy="no-referrer-when-downgrade"
+                    sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin"
                 ></iframe>
             </div>
         </div>

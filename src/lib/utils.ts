@@ -15,3 +15,7 @@ export function formatDate(dateString: string) {
 export function stripHtml(html: string) {
     return html.replace(/<[^>]*>?/gm, "")
 }
+
+export function isMobileDevice(userAgent: string) {
+    return /Mobile|Android|iP(hone|od|ad)|IEMobile|BlackBerry|Kindle|Opera Mini/i.test(userAgent)
+}

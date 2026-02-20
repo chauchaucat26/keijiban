@@ -8,6 +8,7 @@ import { generateAuthorId } from '@/lib/auth-id'
 import { isAdmin } from '@/app/actions/admin-auth'
 import { ManageButtons } from '@/components/manage-buttons'
 import { AdMaxInFeed } from '@/components/ad-max-in-feed'
+import { isMobileDevice } from '@/lib/utils'
 
 export const revalidate = 60 // Refresh every minute for active threads
 
@@ -32,6 +33,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
     // Auth Info
     const headerList = await headers()
     const ip = headerList.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1'
+    const userAgent = headerList.get('user-agent') || ""
     const currentAuthorId = await generateAuthorId(ip)
     const isUserAdmin = await isAdmin()
     const threadOwnerId = posts?.[0]?.author_id
@@ -94,7 +96,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                                 </Link>
                             </div>
                         </div>
-                        {(index + 1) % 3 === 0 && <AdMaxInFeed />}
+                        {(index + 1) % 3 === 0 && <AdMaxInFeed isMobile={isMobile} />}
                     </div>
                 ))}
 
