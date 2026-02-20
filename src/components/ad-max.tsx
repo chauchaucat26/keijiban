@@ -38,12 +38,6 @@ export function AdMax() {
                     {`(window.admaxads = window.admaxads || []).push({admax_id: "${adId}", type: "banner"});`}
                 </Script>
 
-                <Script
-                    src="https://adm.shinobi.jp/st/t.js"
-                    strategy="afterInteractive"
-                    async
-                    charSet="utf-8"
-                />
                 {/* admax */}
             </div>
         </div>
