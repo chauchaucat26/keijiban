@@ -1,6 +1,5 @@
 'use client'
 
-import Script from 'next/script'
 import { useEffect, useState } from 'react'
 
 export function AdMaxInFeed() {
@@ -19,29 +18,22 @@ export function AdMaxInFeed() {
         ? (process.env.NEXT_PUBLIC_ADMAX_IN_FEED_SP_ID || '9502b5a3bbcb7abcb6925906064353c5')
         : (process.env.NEXT_PUBLIC_ADMAX_IN_FEED_PC_ID || '9502b5a3bbcb7abcb6925906064353c5');
 
-    // Force unique key for each ID to ensure clean re-mount
-    const adKey = `ad-infeed-${adId}-${isMobile ? 'sp' : 'pc'}`;
+    const width = isMobile ? '320' : '728';
+    const height = isMobile ? '100' : '90';
 
     return (
         <div className="flex justify-center my-6 overflow-hidden min-h-[90px]">
             <div className="flex flex-col items-center">
-                {/* admax */}
-                <div
-                    key={adKey}
-                    className="admax-ads"
-                    data-admax-id={adId}
-                    style={{
-                        display: 'inline-block',
-                        width: isMobile ? '320px' : '728px',
-                        height: isMobile ? '50px' : '90px'
-                    }}
-                ></div>
-
-                <Script id={`admax-push-${adId}-${isMobile ? 'sp' : 'pc'}`} strategy="afterInteractive">
-                    {`(window.admaxads = window.admaxads || []).push({admax_id: "${adId}", type: "banner"});`}
-                </Script>
-
-                {/* admax */}
+                {/* admax iframe */}
+                <iframe
+                    key={`ad-infeed-${adId}-${isMobile}`}
+                    src={`https://adm.shinobi.jp/st/s.html?id=${adId}`}
+                    width={width}
+                    height={height}
+                    frameBorder="0"
+                    scrolling="no"
+                    style={{ border: 'none', overflow: 'hidden' }}
+                ></iframe>
             </div>
         </div>
     )

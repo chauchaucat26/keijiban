@@ -11,6 +11,12 @@ export function AdMaxOverlay() {
             <Script id={`admax-push-overlay-${adId}`} strategy="afterInteractive">
                 {`(window.admaxads = window.admaxads || []).push({admax_id: "${adId}", type: "overlay"});`}
             </Script>
+            <Script
+                src="https://adm.shinobi.jp/st/t.js"
+                strategy="afterInteractive"
+                async
+                charSet="utf-8"
+            />
             {/* admax */}
         </>
     )

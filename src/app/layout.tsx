@@ -6,7 +6,6 @@ import { auth0 } from "@/lib/auth0";
 import { AdMax } from "@/components/ad-max";
 import { AdMaxOverlay } from "@/components/ad-max-overlay";
 import { ThemeToggle } from "@/components/theme-toggle";
-import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +16,6 @@ export const metadata: Metadata = {
 
 
 export default async function RootLayout({
-
     children,
 }: Readonly<{
     children: React.ReactNode;
@@ -43,12 +41,6 @@ export default async function RootLayout({
                             })();
                         `,
                     }}
-                />
-                <Script
-                    src="https://adm.shinobi.jp/st/t.js"
-                    strategy="afterInteractive"
-                    async
-                    charSet="utf-8"
                 />
             </head>
             <body className={cn(inter.className, "bg-background text-foreground min-h-screen")}>
@@ -90,6 +82,6 @@ export default async function RootLayout({
                 </div>
                 <AdMaxOverlay />
             </body>
-        </html >
+        </html>
     );
 }
