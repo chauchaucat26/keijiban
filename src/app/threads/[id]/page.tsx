@@ -96,7 +96,13 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                                 </Link>
                             </div>
                         </div>
-                        {(index + 1) % 3 === 0 && <AdMaxInFeed isMobile={isMobile} />}
+                        {(index + 1) % 3 === 0 && (
+                            <AdMaxInFeed
+                                adId={inFeedAdId}
+                                width={inFeedWidth}
+                                height={inFeedHeight}
+                            />
+                        )}
                     </div>
                 ))}
 

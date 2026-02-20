@@ -27,6 +27,13 @@ export default async function RootLayout({
     const userAgent = headersList.get('user-agent') || "";
     const isMobile = isMobileDevice(userAgent);
 
+    // Ad config
+    const topAdId = isMobile
+        ? (process.env.NEXT_PUBLIC_ADMAX_TOP_SP_ID || '1ec655c6104cb6e4957a070be9665f3b')
+        : (process.env.NEXT_PUBLIC_ADMAX_TOP_PC_ID || '1ec655c6104cb6e4957a070be9665f3b');
+    const topWidth = isMobile ? '300' : '728';
+    const topHeight = isMobile ? '250' : '90';
+
     return (
         <html lang="ja" suppressHydrationWarning>
             <head>

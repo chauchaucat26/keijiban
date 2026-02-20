@@ -1,13 +1,6 @@
 'use client'
 
-export function AdMaxInFeed({ isMobile }: { isMobile?: boolean }) {
-    const adId = isMobile
-        ? (process.env.NEXT_PUBLIC_ADMAX_IN_FEED_SP_ID || '9502b5a3bbcb7abcb6925906064353c5')
-        : (process.env.NEXT_PUBLIC_ADMAX_IN_FEED_PC_ID || '9502b5a3bbcb7abcb6925906064353c5');
-
-    const width = isMobile ? '320' : '728';
-    const height = isMobile ? '100' : '90';
-
+export function AdMaxInFeed({ adId, width, height }: { adId: string, width: string, height: string }) {
     const srcDoc = `
         <!DOCTYPE html>
         <html>
