@@ -61,7 +61,7 @@ export function ReplyForm({ threadId }: { threadId: string }) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="名前 (省略可)"
-                    className="w-full sm:w-1/2 rounded-md border text-zinc-800 dark:bg-zinc-800 dark:border-zinc-700 border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+                    className="w-full sm:w-1/2 rounded-md border bg-white dark:bg-zinc-800 dark:border-zinc-700 border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
                 />
                 <textarea
                     name="message"
@@ -71,7 +71,7 @@ export function ReplyForm({ threadId }: { threadId: string }) {
                     onChange={(e) => setMessage(e.target.value)}
                     maxLength={200}
                     placeholder="コメントを入力..."
-                    className="w-full rounded-md border text-zinc-800 dark:bg-zinc-800 dark:border-zinc-700 border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-md border bg-white dark:bg-zinc-800 dark:border-zinc-700 border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
             </div>
 

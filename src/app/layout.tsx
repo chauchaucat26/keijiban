@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { auth0 } from "@/lib/auth0";
 import { AdMax } from "@/components/ad-max";
 import { AdMaxOverlay } from "@/components/ad-max-overlay";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,12 +24,32 @@ export default async function RootLayout({
     const session = await auth0.getSession();
 
     return (
-        <html lang="ja">
-            <body className={cn(inter.className, "bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 min-h-screen")}>
+        <html lang="ja" suppressHydrationWarning>
+            <head>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                            (function() {
+                                try {
+                                    var theme = localStorage.getItem('theme');
+                                    var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                                    if (theme === 'dark' || (!theme && systemTheme === 'dark')) {
+                                        document.documentElement.classList.add('dark');
+                                    } else {
+                                        document.documentElement.classList.remove('dark');
+                                    }
+                                } catch (e) {}
+                            })();
+                        `,
+                    }}
+                />
+            </head>
+            <body className={cn(inter.className, "bg-background text-foreground min-h-screen")}>
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <header className="mb-8 flex justify-between items-center">
                         <h1 className="text-2xl font-bold tracking-tight">雑談掲示板</h1>
                         <nav className="flex items-center gap-4">
+                            <ThemeToggle />
                             {session ? (
                                 <div className="flex items-center gap-3">
                                     <span className="text-sm text-zinc-500 hidden sm:inline">
