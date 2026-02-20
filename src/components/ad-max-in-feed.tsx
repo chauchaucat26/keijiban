@@ -38,7 +38,6 @@ export function AdMaxInFeed({ isMobile }: { isMobile?: boolean }) {
                     scrolling="no"
                     style={{ border: 'none', overflow: 'hidden' }}
                     referrerPolicy="no-referrer-when-downgrade"
-                    sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin"
                 ></iframe>
             </div>
         </div>
