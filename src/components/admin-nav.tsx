@@ -14,16 +14,16 @@ export function AdminNav() {
     ]
 
     return (
-        <nav className="flex gap-1 mb-8 bg-zinc-100 dark:bg-zinc-800/50 p-1 rounded-lg w-fit">
+        <nav className="flex gap-1 mb-10 bg-muted/50 p-1.5 rounded-2xl w-fit border border-border/50 card-shadow">
             {navItems.map((item) => (
                 <Link
                     key={item.href}
                     href={item.href}
                     className={cn(
-                        "px-4 py-1.5 rounded-md text-sm font-medium transition-all",
+                        "px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all",
                         pathname === item.href
-                            ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-50 shadow-sm"
-                            : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-200/50 dark:hover:bg-zinc-700/50"
+                            ? "bg-card text-foreground shadow-md border border-border/20 scale-[1.02]"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                     )}
                 >
                     {item.label}

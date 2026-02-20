@@ -38,18 +38,20 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
     const threadOwnerId = posts?.[0]?.author_id
 
     return (
-        <div>
-            <div className="mb-6">
-                <Link href="/" className="text-sm text-zinc-500 hover:text-blue-600 mb-4 inline-block">&larr; トップに戻る</Link>
-                <div className="flex items-center gap-2 mb-2">
-                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+        <div className="max-w-4xl mx-auto">
+            <div className="mb-10">
+                <Link href="/" className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors mb-6 inline-flex items-center gap-2 group">
+                    <span className="group-hover:-translate-x-1 transition-transform">←</span> Back to home
+                </Link>
+                <div className="flex items-center gap-3 mb-4">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-secondary text-secondary-foreground">
                         {thread.category}
                     </span>
-                    <span className="text-xs text-zinc-400">
+                    <span className="text-xs font-medium text-muted-foreground/60">
                         {formatDate(thread.created_at)}
                     </span>
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-zinc-50 break-words">
+                <h1 className="text-3xl md:text-5xl font-black text-foreground tracking-tight break-words leading-[1.1]">
                     {thread.title}
                 </h1>
             </div>
@@ -57,28 +59,32 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
             <div className="space-y-6 mb-12">
                 {posts?.map((post, index) => (
                     <div key={post.id} className="space-y-6">
-                        <div className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-sm border dark:border-zinc-800">
-                            <div className="flex justify-between items-baseline mb-3 pb-3 border-b dark:border-zinc-800">
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-zinc-400 text-sm font-mono">#{index + 1}</span>
-                                    <span className="font-bold text-zinc-800 dark:text-zinc-200">
-                                        {post.name || 'Anonymous'}
-                                    </span>
-                                    <span className="text-[10px] sm:text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-500 font-mono">
-                                        ID:{post.author_id || '????'}
-                                    </span>
-                                    {post.author_id === threadOwnerId && (
-                                        <span className="text-[10px] sm:text-xs text-blue-500 font-bold ml-1">★</span>
-                                    )}
+                        <div className="bg-card text-card-foreground p-6 sm:p-8 rounded-2xl shadow-sm border card-shadow group/post">
+                            <div className="flex justify-between items-center mb-6 pb-4 border-b border-border/50">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-muted-foreground/40 text-xs font-mono font-bold tracking-tighter">#{index + 1}</span>
+                                    <div className="flex flex-col">
+                                        <span className="font-black text-sm text-foreground leading-none">
+                                            {post.name || 'Anonymous'}
+                                        </span>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <span className="text-[9px] font-bold uppercase tracking-tight bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                                                ID:{post.author_id || '????'}
+                                            </span>
+                                            {post.author_id === threadOwnerId && (
+                                                <span className="text-[10px] bg-primary/10 text-primary font-black px-1.5 py-0.5 rounded uppercase tracking-tighter shadow-sm border border-primary/10">Host</span>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-                                <span className="text-xs text-zinc-400">
+                                <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">
                                     {formatDate(post.created_at)}
                                 </span>
                             </div>
-                            <div className="whitespace-pre-wrap text-zinc-700 dark:text-zinc-300 leading-relaxed break-words mb-4">
+                            <div className="whitespace-pre-wrap text-foreground/90 leading-relaxed break-words mb-6 text-base sm:text-lg tracking-tight">
                                 {post.message}
                             </div>
-                            <div className="flex justify-between items-center group">
+                            <div className="flex justify-between items-center bg-transparent">
                                 <ManageButtons
                                     postId={post.id}
                                     threadId={id}
@@ -88,10 +94,10 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                                 />
                                 <Link
                                     href={`/report?post_id=${post.id}`}
-                                    className="text-xs text-zinc-400 hover:text-red-500 flex items-center gap-1 transition-colors ml-auto"
-                                    title="この投稿を通報する"
+                                    className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-destructive flex items-center gap-1.5 transition-all ml-auto group/report"
+                                    title="Report this post"
                                 >
-                                    <span className="text-xs">⚠️</span> 通報
+                                    <span className="text-xs group-hover/report:rotate-12 transition-transform">⚠️</span> Report
                                 </Link>
                             </div>
                         </div>
@@ -107,8 +113,11 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                 )}
             </div>
 
-            <div className="bg-zinc-50 dark:bg-zinc-900/50 p-6 rounded-lg border dark:border-zinc-800">
-                <h3 className="text-lg font-bold mb-4">レスを投稿する</h3>
+            <div className="mt-16 bg-muted/20 p-8 sm:p-12 rounded-[2rem] border border-border/50 card-shadow">
+                <div className="mb-8">
+                    <h3 className="text-2xl font-black tracking-tighter">Join the conversation</h3>
+                    <p className="text-muted-foreground text-sm mt-1">Be respectful and stay on topic.</p>
+                </div>
                 <ReplyForm threadId={thread.id} />
             </div>
         </div>

@@ -22,22 +22,47 @@ export default async function Home() {
         .limit(5)
 
     return (
-        <div>
-            <div className="flex justify-end mb-4">
-                <Link href="/create" className="bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all font-bold flex items-center gap-2 fixed bottom-8 right-8 z-50 md:static md:z-auto md:w-auto md:shadow-none md:rounded-md md:px-4 md:py-2">
-                    <span>✏️</span> スレッド作成
+        <div className="max-w-5xl mx-auto px-4 sm:px-0">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                <div className="flex-1">
+                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground mb-4 leading-[0.9]">
+                        Connect. <br />
+                        <span className="text-primary/10 dark:text-primary/5 select-none">Share. </span><br className="hidden sm:block" />
+                        Discuss.
+                    </h1>
+                    <p className="text-muted-foreground text-sm md:text-lg font-medium max-w-lg leading-relaxed">
+                        Join the most active discussions in the community. Simple, fast, and free.
+                    </p>
+                </div>
+
+                <Link
+                    href="/create"
+                    className="bg-primary text-primary-foreground px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all font-black flex items-center justify-center gap-3 fixed bottom-8 right-8 z-[100] md:static md:z-auto md:w-auto text-lg md:text-base border border-primary/20"
+                >
+                    <span className="text-xl">✏️</span>
+                    <span>Create Thread</span>
                 </Link>
             </div>
 
-            <SearchBar />
+            <div className="space-y-16">
+                <section className="animate-in fade-in slide-in-from-bottom-2 duration-700 delay-150">
+                    <SearchBar />
+                </section>
 
-            <CategoryList />
+                <section className="animate-in fade-in slide-in-from-bottom-2 duration-700 delay-300">
+                    <CategoryList />
+                </section>
 
-            {popularThreads && popularThreads.length > 0 && (
-                <ThreadList threads={popularThreads} title="🔥 人気・急上昇スレッド" />
-            )}
+                {popularThreads && popularThreads.length > 0 && (
+                    <section className="animate-in fade-in slide-in-from-bottom-2 duration-700 delay-450">
+                        <ThreadList threads={popularThreads} title="🔥 Trending Conversations" />
+                    </section>
+                )}
 
-            <ThreadList threads={latestThreads || []} title="🆕 最新スレッド" />
+                <section className="animate-in fade-in slide-in-from-bottom-2 duration-700 delay-600">
+                    <ThreadList threads={latestThreads || []} title="🆕 Latest Additions" />
+                </section>
+            </div>
         </div>
     )
 }

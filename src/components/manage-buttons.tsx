@@ -50,39 +50,39 @@ export function ManageButtons({ postId, threadId, authorId, isOwner, isAdmin }: 
     }
 
     return (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
             {isAdmin && (
                 <>
                     <Link
                         href={`/admin/posts/${postId}/edit`}
-                        className="text-xs text-zinc-400 hover:text-blue-600 transition-colors"
+                        className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-all"
                     >
-                        編集
+                        Edit
                     </Link>
                     <button
                         onClick={() => handleBan(false)}
                         disabled={banning}
-                        className="text-xs text-orange-600 hover:bg-orange-50 px-2 py-1 rounded transition-colors disabled:opacity-50"
-                        title="このスレッド内での投稿を禁止し、過去の投稿を削除します"
+                        className="text-[10px] font-bold uppercase tracking-widest text-orange-500/60 hover:text-orange-500 transition-all disabled:opacity-50"
+                        title="Ban from this thread"
                     >
-                        BAN(スレ)
+                        Ban (Thread)
                     </button>
                     <button
                         onClick={() => handleBan(true)}
                         disabled={banning}
-                        className="text-xs text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors disabled:opacity-50 font-bold"
-                        title="掲示板全体での投稿を禁止し、過去の投稿をすべて削除します"
+                        className="text-[10px] font-black uppercase tracking-widest text-destructive/60 hover:text-destructive transition-all disabled:opacity-50"
+                        title="Ban from entire board"
                     >
-                        BAN(全体)
+                        Ban (Global)
                     </button>
                 </>
             )}
             <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="text-xs text-zinc-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 hover:text-destructive transition-all disabled:opacity-50"
             >
-                {deleting ? '削除中...' : '削除'}
+                {deleting ? 'Deleting...' : 'Delete'}
             </button>
         </div>
     )

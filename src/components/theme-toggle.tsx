@@ -34,13 +34,13 @@ export function ThemeToggle() {
     return (
         <button
             onClick={toggleTheme}
-            className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-500 dark:text-zinc-400"
+            className="p-2.5 rounded-xl hover:bg-muted transition-all text-muted-foreground hover:text-foreground active:scale-95 shadow-sm border border-transparent hover:border-border/50"
             aria-label="テーマを切り替え"
         >
             {theme === 'light' ? (
-                <Moon className="h-5 w-5" />
+                <Moon className="h-5 w-5 fill-current" />
             ) : (
-                <Sun className="h-5 w-5" />
+                <Sun className="h-5 w-5 fill-current" />
             )}
         </button>
     )

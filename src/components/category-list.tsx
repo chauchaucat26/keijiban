@@ -6,14 +6,16 @@ const CATEGORIES = [
 
 export function CategoryList() {
     return (
-        <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">カテゴリ</h2>
-            <div className="flex flex-wrap gap-2">
+        <div className="mb-10">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 ml-1">
+                Categories
+            </h2>
+            <div className="flex flex-wrap gap-2.5">
                 {CATEGORIES.map((cat) => (
                     <Link
                         key={cat}
                         href={`/categories/${encodeURIComponent(cat)}`}
-                        className="px-4 py-2 bg-white dark:bg-zinc-900 border dark:border-zinc-800 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-200 dark:hover:border-blue-800 transition-colors text-sm font-medium"
+                        className="px-4 py-2 bg-secondary/50 text-secondary-foreground border border-transparent rounded-xl hover:bg-secondary hover:border-primary/20 transition-all text-xs font-bold uppercase tracking-wide active:scale-95 shadow-sm"
                     >
                         {cat}
                     </Link>

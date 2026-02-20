@@ -45,43 +45,61 @@ export function ReplyForm({ threadId }: { threadId: string }) {
     }
 
     return (
-        <form action={handleSubmit} ref={formRef} className="space-y-4">
+        <form action={handleSubmit} ref={formRef} className="space-y-6 bg-card border rounded-2xl p-6 sm:p-8 card-shadow animate-in fade-in slide-in-from-bottom-2 duration-300">
             <input type="hidden" name="thread_id" value={threadId} />
 
             {error && (
-                <div className="text-red-600 text-sm bg-red-50 p-2 rounded">
+                <div className="text-destructive text-sm bg-destructive/10 border border-destructive/20 p-3 rounded-xl font-medium">
                     {error}
                 </div>
             )}
 
-            <div>
-                <input
-                    type="text"
-                    name="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="名前 (省略可)"
-                    className="w-full sm:w-1/2 rounded-md border bg-white dark:bg-zinc-800 dark:border-zinc-700 border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-                />
-                <textarea
-                    name="message"
-                    required
-                    rows={4}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    maxLength={200}
-                    placeholder="コメントを入力..."
-                    className="w-full rounded-md border bg-white dark:bg-zinc-800 dark:border-zinc-700 border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+            <div className="space-y-4">
+                <div className="space-y-1.5">
+                    <label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
+                        Display Name (Optional)
+                    </label>
+                    <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Anonymous"
+                        className="w-full sm:w-2/3 rounded-xl border border-input bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground/50"
+                    />
+                </div>
+
+                <div className="space-y-1.5">
+                    <label htmlFor="message" className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
+                        Your Message
+                    </label>
+                    <textarea
+                        name="message"
+                        id="message"
+                        required
+                        rows={5}
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        maxLength={200}
+                        placeholder="Share your thoughts..."
+                        className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground/50 resize-none"
+                    />
+                </div>
             </div>
 
-            <button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-blue-600 text-white font-bold py-2 px-6 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
-            >
-                {isSubmitting ? '送信中...' : '書き込む'}
-            </button>
+            <div className="flex items-center justify-between pt-2">
+                <p className="text-[10px] text-muted-foreground/60 max-w-[200px]">
+                    Please follow the community guidelines. Max 200 characters.
+                </p>
+                <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-primary text-primary-foreground font-bold py-2.5 px-8 rounded-full hover:opacity-90 transition-all disabled:opacity-50 shadow-md hover:shadow-lg active:scale-95 text-sm"
+                >
+                    {isSubmitting ? 'Posting...' : 'Post Reply'}
+                </button>
+            </div>
         </form>
     )
 }

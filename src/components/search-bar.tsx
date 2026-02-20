@@ -16,13 +16,13 @@ export function SearchBar() {
     }
 
     return (
-        <form onSubmit={handleSearch} className="mb-8 relative">
+        <form onSubmit={handleSearch} className="mb-10 relative group">
             <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 h-5 w-5" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/50 h-5 w-5 group-focus-within:text-primary transition-colors" />
                 <input
                     type="text"
                     placeholder="キーワードでスレッドを検索..."
-                    className="w-full pl-10 pr-4 py-3 rounded-lg border dark:border-zinc-800 bg-white dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
+                    className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-input bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all shadow-sm placeholder:text-muted-foreground/40"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                 />
