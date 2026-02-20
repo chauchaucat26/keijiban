@@ -8,7 +8,9 @@ export function AdMaxOverlay() {
 
     useEffect(() => {
         const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
+            const isMob = window.innerWidth < 768;
+            setIsMobile(isMob);
+            console.log(`AdMaxOverlay: ${isMob ? 'SP' : 'PC'}`);
         };
         // Initial check
         checkMobile();

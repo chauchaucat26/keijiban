@@ -7,7 +7,9 @@ export function AdMax() {
 
     useEffect(() => {
         const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
+            const isMob = window.innerWidth < 768;
+            setIsMobile(isMob);
+            console.log(`AdMax: ${isMob ? 'SP' : 'PC'}`);
         };
         checkMobile();
         window.addEventListener('resize', checkMobile);
