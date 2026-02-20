@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { auth0 } from "@/lib/auth0";
 import { AdMax } from "@/components/ad-max";
 import { AdMaxOverlay } from "@/components/ad-max-overlay";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { headers } from "next/headers";
-import { isMobileDevice } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,73 +20,53 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const session = await auth0.getSession();
-    const headersList = await headers();
-    const userAgent = headersList.get('user-agent') || "";
-    const isMobile = isMobileDevice(userAgent);
-
-    // Ad config
-    const topAdId = isMobile
-        ? (process.env.NEXT_PUBLIC_ADMAX_TOP_SP_ID || '1ec655c6104cb6e4957a070be9665f3b')
-        : (process.env.NEXT_PUBLIC_ADMAX_TOP_PC_ID || '1ec655c6104cb6e4957a070be9665f3b');
-    const topWidth = isMobile ? '300' : '728';
-    const topHeight = isMobile ? '250' : '90';
-
     return (
         <html lang="ja" suppressHydrationWarning>
             <head>
                 <script
                     dangerouslySetInnerHTML={{
                         __html: `
-                            (function() {
-                                try {
-                                    var theme = localStorage.getItem('theme');
-                                    var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                                    if (theme === 'dark' || (!theme && systemTheme === 'dark')) {
-                                        document.documentElement.classList.add('dark');
-                                    } else {
-                                        document.documentElement.classList.remove('dark');
-                                    }
-                                } catch (e) {}
-                            })();
-                        `,
+(function() {
+  try {
+    var theme = localStorage.getItem('theme');
+    var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+    if (!theme && supportDarkMode) theme = 'dark';
+    if (theme === 'dark') document.documentElement.classList.add('dark');
+  } catch (e) {}
+})();
+`,
                     }}
                 />
             </head>
-            <body className={cn(inter.className, "bg-background text-foreground min-h-screen")}>
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <header className="mb-8 flex justify-between items-center">
-                        <h1 className="text-2xl font-bold tracking-tight">雑談掲示板</h1>
-                        <nav className="flex items-center gap-4">
-                            <ThemeToggle />
-                            {session ? (
-                                <div className="flex items-center gap-3">
-                                    <span className="text-sm text-zinc-500 hidden sm:inline">
-                                        {session.user.name}さん
-                                    </span>
-                                    <a href="/auth/logout" className="text-sm text-zinc-500 hover:text-red-500 transition-colors">
-                                        ログアウト
-                                    </a>
-                                </div>
-                            ) : (
-                                <a href="/auth/login" className="text-sm text-zinc-500 hover:text-blue-600 transition-colors">
-                                    ログイン
-                                </a>
-                            )}
-                            <a href="/create" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                                スレ作成
-                            </a>
-                        </nav>
+            <body className={cn(inter.className, "antialiased min-h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300")}>
+                <div className="flex flex-col min-h-screen">
+                    <header className="sticky top-0 z-50 w-full border-b bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md dark:border-zinc-800">
+                        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+                            <Link href="/" className="text-xl font-bold tracking-tighter hover:opacity-80 transition-opacity flex items-center gap-2">
+                                <span className="text-2xl">🐱</span>
+                                <span>chauchaucat26/keijiban</span>
+                            </Link>
+
+                            <div className="flex items-center gap-4">
+                                <Link
+                                    href="/threads/new"
+                                    className="bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity shadow-sm"
+                                >
+                                    ＋ スレッド作成
+                                </Link>
+                                <ThemeToggle />
+                            </div>
+                        </div>
                     </header>
+
                     <main>
                         <AdMax />
                         {children}
                     </main>
-                    <footer className="mt-16 text-center text-zinc-500 text-sm py-8 border-t dark:border-zinc-800">
-                        <p>&copy; 2026 雑談掲示板. All rights reserved.</p>
-                        <div className="mt-2 space-x-4">
-                            <a href="/terms" className="hover:underline">利用規約</a>
-                            <a href="/privacy" className="hover:underline">プライバシーポリシー</a>
+
+                    <footer className="mt-auto border-t py-8 bg-zinc-50 dark:bg-zinc-950 dark:border-zinc-800">
+                        <div className="container mx-auto px-4 text-center text-zinc-500 dark:text-zinc-400 text-sm">
+                            <p>© {new Date().getFullYear()} chauchaucat26/keijiban - シンプルな掲示板</p>
                         </div>
                     </footer>
                 </div>

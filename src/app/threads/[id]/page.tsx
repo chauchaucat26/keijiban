@@ -33,7 +33,6 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
     // Auth Info
     const headerList = await headers()
     const ip = headerList.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1'
-    const userAgent = headerList.get('user-agent') || ""
     const currentAuthorId = await generateAuthorId(ip)
     const isUserAdmin = await isAdmin()
     const threadOwnerId = posts?.[0]?.author_id
@@ -97,11 +96,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                             </div>
                         </div>
                         {(index + 1) % 3 === 0 && (
-                            <AdMaxInFeed
-                                adId={inFeedAdId}
-                                width={inFeedWidth}
-                                height={inFeedHeight}
-                            />
+                            <AdMaxInFeed />
                         )}
                     </div>
                 ))}

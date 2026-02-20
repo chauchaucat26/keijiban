@@ -1,11 +1,26 @@
 'use client'
 
+import { useEffect, useState } from 'react';
 import Script from 'next/script'
 
-export function AdMaxOverlay({ isMobile }: { isMobile?: boolean }) {
+export function AdMaxOverlay() {
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        // Initial check
+        checkMobile();
+        // Add event listener for resize
+        window.addEventListener('resize', checkMobile);
+        // Clean up event listener on component unmount
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     if (!isMobile) return null;
 
-    const adId = process.env.NEXT_PUBLIC_ADMAX_OVERLAY_ID || '94df3ac80b7623155174e23d8e0b01ba';
+    const adId = process.env.NEXT_PUBLIC_ADMAX_OVERLAY_ID || 'b27dce7e78be5f519391bc47c0a6b579';
 
     return (
         <>
