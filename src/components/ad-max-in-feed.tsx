@@ -19,12 +19,15 @@ export function AdMaxInFeed() {
         ? (process.env.NEXT_PUBLIC_ADMAX_IN_FEED_SP_ID || '9502b5a3bbcb7abcb6925906064353c5')
         : (process.env.NEXT_PUBLIC_ADMAX_IN_FEED_PC_ID || '9502b5a3bbcb7abcb6925906064353c5');
 
+    // Force unique key for each ID to ensure clean re-mount
+    const adKey = `ad-infeed-${adId}-${isMobile ? 'sp' : 'pc'}`;
+
     return (
         <div className="flex justify-center my-6 overflow-hidden min-h-[90px]">
             <div className="flex flex-col items-center">
                 {/* admax */}
                 <div
-                    key={adId} // Re-render when ID changes
+                    key={adKey}
                     className="admax-ads"
                     data-admax-id={adId}
                     style={{
@@ -34,7 +37,7 @@ export function AdMaxInFeed() {
                     }}
                 ></div>
 
-                <Script id={`admax-push-${adId}-${Math.random()}`} strategy="afterInteractive">
+                <Script id={`admax-push-${adId}-${isMobile ? 'sp' : 'pc'}`} strategy="afterInteractive">
                     {`(window.admaxads = window.admaxads || []).push({admax_id: "${adId}", type: "banner"});`}
                 </Script>
 
