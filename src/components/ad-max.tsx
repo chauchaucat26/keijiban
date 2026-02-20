@@ -25,6 +25,7 @@ export function AdMax() {
         <!DOCTYPE html>
         <html>
         <head>
+            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
             <style>body { margin: 0; padding: 0; overflow: hidden; }</style>
         </head>
         <body>
@@ -49,6 +50,7 @@ export function AdMax() {
                     frameBorder="0"
                     scrolling="no"
                     style={{ border: 'none', overflow: 'hidden' }}
+                    referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
             </div>
         </div>
