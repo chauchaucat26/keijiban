@@ -1,26 +1,17 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-
-type AdmaxAdType = {
-    admax_id: string;
-    type: string;
-}
-
-declare global {
-    var admaxads: AdmaxAdType[];
-}
 
 export function AdMaxInFeed() {
     const [isMobile, setIsMobile] = useState(false);
     const pathname = usePathname();
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const checkMobile = () => {
             const isMob = window.innerWidth < 768;
             setIsMobile(isMob);
-            console.log(`AdMaxInFeed: ${isMob ? 'SP' : 'PC'}`);
         };
         checkMobile();
         window.addEventListener('resize', checkMobile);
@@ -35,34 +26,42 @@ export function AdMaxInFeed() {
     const height = isMobile ? '100' : '90';
 
     useEffect(() => {
-        const tag = document.createElement('script');
-        tag.src = 'https://adm.shinobi.jp/st/t.js';
-        tag.async = true;
-        tag.setAttribute('data-cfasync', 'false');
-        document.body.appendChild(tag);
+        if (!containerRef.current) return;
+        const container = containerRef.current;
 
-        try {
-            ; (globalThis.admaxads = window.admaxads || []).push({
-                admax_id: adId,
-                type: 'banner',
-            });
-        } catch (error) {
-            console.error(error);
-        }
+        // コンテナをリセット
+        container.innerHTML = '';
 
-        return () => {
-            document.body.removeChild(tag);
-        };
-    }, [pathname, adId]);
+        // <!-- admax -->
+        // <div class="admax-ads" data-admax-id="..." style="display:inline-block;"></div>
+        const adDiv = document.createElement('div');
+        adDiv.className = 'admax-ads';
+        adDiv.setAttribute('data-admax-id', adId);
+        adDiv.style.display = 'inline-block';
+        adDiv.style.width = `${width}px`;
+        adDiv.style.height = `${height}px`;
+        container.appendChild(adDiv);
+
+        // <script>(admaxads = window.admaxads || []).push({...});</script>
+        const pushScript = document.createElement('script');
+        pushScript.type = 'text/javascript';
+        pushScript.text = `(admaxads = window.admaxads || []).push({admax_id: "${adId}", type: "banner"});`;
+        container.appendChild(pushScript);
+
+        // <script src="https://adm.shinobi.jp/st/t.js" async></script>
+        const loaderScript = document.createElement('script');
+        loaderScript.type = 'text/javascript';
+        loaderScript.charset = 'utf-8';
+        loaderScript.src = 'https://adm.shinobi.jp/st/t.js';
+        loaderScript.async = true;
+        loaderScript.setAttribute('data-cfasync', 'false');
+        container.appendChild(loaderScript);
+        // <!-- /admax -->
+    }, [pathname, adId, width, height]);
 
     return (
         <div className="flex justify-center my-6 overflow-hidden min-h-[90px]">
-            <div
-                key={pathname}
-                className="admax-ads"
-                data-admax-id={adId}
-                style={{ display: 'inline-block', width: `${width}px`, height: `${height}px` }}
-            ></div>
+            <div ref={containerRef} />
         </div>
     );
 }
