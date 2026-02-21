@@ -16,18 +16,15 @@ export function AdMax() {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    const adId = isMobile
-        ? (process.env.NEXT_PUBLIC_ADMAX_TOP_SP_ID || 'bc915051a7c139bc652e3885e61c0813')
-        : (process.env.NEXT_PUBLIC_ADMAX_TOP_PC_ID || '1ec655c6104cb6e4957a070be9665f3b');
-
+    const src = isMobile ? '/ad-top-sp.html' : '/ad-top-pc.html';
     const width = isMobile ? '300' : '728';
     const height = isMobile ? '250' : '90';
 
     return (
         <div className="flex justify-center my-8 overflow-hidden min-h-[90px]">
             <iframe
-                key={adId}
-                src={`/ad-max-bridge.html?adId=${adId}`}
+                key={src}
+                src={src}
                 width={width}
                 height={height}
                 scrolling="no"
