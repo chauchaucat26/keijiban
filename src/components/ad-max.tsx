@@ -1,10 +1,20 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import Script from "next/script";
+import { usePathname } from "next/navigation";
+
+type AdmaxAdType = {
+    admax_id: string;
+    type: string;
+}
+
+declare global {
+    var admaxads: AdmaxAdType[];
+}
 
 export function AdMax() {
     const [isMobile, setIsMobile] = useState(false);
+    const pathname = usePathname();
 
     useEffect(() => {
         const checkMobile = () => {
@@ -24,30 +34,36 @@ export function AdMax() {
     const width = isMobile ? '300' : '728';
     const height = isMobile ? '250' : '90';
 
-    if (!adId) return null;
+    useEffect(() => {
+        // 広告配信用のタグを挿入する
+        const tag = document.createElement('script');
+        tag.src = 'https://adm.shinobi.jp/st/t.js';
+        tag.async = true;
+        tag.setAttribute('data-cfasync', 'false');
+        document.body.appendChild(tag);
+
+        try {
+            ; (globalThis.admaxads = window.admaxads || []).push({
+                admax_id: adId,
+                type: 'banner',
+            });
+        } catch (error) {
+            console.error(error);
+        }
+
+        return () => {
+            document.body.removeChild(tag);
+        };
+    }, [pathname, adId]);
 
     return (
         <div className="flex justify-center my-8 overflow-hidden min-h-[90px]">
-            <div className="flex flex-col items-center">
-                <div
-                    key={`ad-container-top-${adId}`}
-                    className="admax-ads"
-                    data-admax-id={adId}
-                    style={{ display: 'inline-block', width: `${width}px`, height: `${height}px` }}
-                    data-cfasync="false"
-                ></div>
-                <Script id={`admax-push-top-${adId}`} strategy="afterInteractive">
-                    {`(window.admaxads = window.admaxads || []).push({admax_id: "${adId}", type: "banner"});`}
-                </Script>
-                <Script
-                    src="https://adm.shinobi.jp/st/t.js"
-                    strategy="afterInteractive"
-                    async
-                    charSet="utf-8"
-                />
-            </div>
+            <div
+                key={pathname}
+                className="admax-ads"
+                data-admax-id={adId}
+                style={{ display: 'inline-block', width: `${width}px`, height: `${height}px` }}
+            ></div>
         </div>
-    )
+    );
 }
-
-
