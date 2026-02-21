@@ -28,16 +28,24 @@ export function AdMaxInFeed() {
 
     return (
         <div className="flex justify-center my-6 overflow-hidden min-h-[90px]">
-            <iframe
-                src={`/ad-max-bridge.html?adId=${adId}&type=banner`}
-                width={width}
-                height={height}
-                scrolling="no"
-                frameBorder="0"
-                style={{ border: 'none', overflow: 'hidden' }}
-                title="Advertisement"
-                data-cfasync="false"
-            />
+            <div className="flex flex-col items-center">
+                <div
+                    key={`ad-container-infeed-${adId}`}
+                    className="admax-ads"
+                    data-admax-id={adId}
+                    style={{ display: 'inline-block', width: `${width}px`, height: `${height}px` }}
+                    data-cfasync="false"
+                ></div>
+                <Script id={`admax-push-infeed-${adId}`} strategy="afterInteractive">
+                    {`(window.admaxads = window.admaxads || []).push({admax_id: "${adId}", type: "banner"});`}
+                </Script>
+                <Script
+                    src="https://adm.shinobi.jp/st/t.js"
+                    strategy="afterInteractive"
+                    async
+                    charSet="utf-8"
+                />
+            </div>
         </div>
     )
 }
