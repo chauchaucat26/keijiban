@@ -36,6 +36,7 @@ export function AdMax() {
                 frameBorder="0"
                 style={{ border: 'none', overflow: 'hidden' }}
                 title="Advertisement"
+                data-cfasync="false"
             />
         </div>
     )
