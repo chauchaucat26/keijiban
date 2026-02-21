@@ -1,20 +1,10 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-
-type AdmaxAdType = {
-    admax_id: string;
-    type: string;
-}
-
-declare global {
-    var admaxads: AdmaxAdType[];
-}
+import Script from "next/script";
 
 export function AdMax() {
     const [isMobile, setIsMobile] = useState(false);
-    const pathname = usePathname();
 
     useEffect(() => {
         const checkMobile = () => {
@@ -35,35 +25,33 @@ export function AdMax() {
     const height = isMobile ? '250' : '90';
 
     useEffect(() => {
-        // 広告配信用のタグを挿入する
-        const tag = document.createElement('script');
-        tag.src = 'https://adm.shinobi.jp/st/t.js';
-        tag.async = true;
-        tag.setAttribute('data-cfasync', 'false');
-        document.body.appendChild(tag);
-
-        try {
-            ; (globalThis.admaxads = window.admaxads || []).push({
-                admax_id: adId,
-                type: 'banner',
-            });
-        } catch (error) {
-            console.error(error);
+        if (typeof window !== 'undefined' && adId) {
+            // @ts-ignore
+            window.admaxads = window.admaxads || [];
+            // @ts-ignore
+            window.admaxads.push({ admax_id: adId, type: "banner" });
         }
-
-        return () => {
-            document.body.removeChild(tag);
-        };
-    }, [pathname, adId]);
+    }, [adId]);
 
     return (
         <div className="flex justify-center my-8 overflow-hidden min-h-[90px]">
-            <div
-                key={pathname}
-                className="admax-ads"
-                data-admax-id={adId}
-                style={{ display: 'inline-block', width: `${width}px`, height: `${height}px` }}
-            ></div>
+            <div className="flex flex-col items-center">
+                <div
+                    key={`ad-container-top-${adId}`}
+                    className="admax-ads"
+                    data-admax-id={adId}
+                    style={{ display: 'inline-block', width: `${width}px`, height: `${height}px` }}
+                ></div>
+                <Script
+                    src="https://adm.shinobi.jp/st/t.js"
+                    strategy="afterInteractive"
+                    async
+                    charSet="utf-8"
+                    data-cfasync="false"
+                />
+            </div>
         </div>
-    );
+    )
 }
+
+
