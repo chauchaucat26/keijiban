@@ -51,11 +51,14 @@ export default async function AdminReportsPage() {
     const groupedReports = Array.from(groupedMap.values())
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">通報一覧</h1>
+        <div className="space-y-8 animate-in fade-in duration-500">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-8">
+                <div>
+                    <h1 className="text-3xl font-black tracking-tighter">通報管理</h1>
+                    <p className="text-muted-foreground text-sm font-medium">コミュニティからの通報を処理します。</p>
+                </div>
                 <form action={adminLogout}>
-                    <button className="text-sm text-zinc-500 hover:text-red-600 transition-colors">
+                    <button className="bg-secondary text-secondary-foreground px-4 py-2 rounded-xl text-xs font-bold hover:bg-muted transition-all shadow-sm border border-border/50">
                         ログアウト
                     </button>
                 </form>
@@ -63,15 +66,15 @@ export default async function AdminReportsPage() {
 
             <AdminNav />
 
-            <div className="space-y-6">
+            <div className="grid gap-8">
                 {groupedReports?.map((group: any) => (
-                    <div key={group.postId} className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-sm border dark:border-zinc-800">
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="flex items-center gap-3">
-                                <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    <div key={group.postId} className="bg-card text-card-foreground p-8 rounded-[2rem] shadow-sm border border-border/50 card-shadow transition-all hover:shadow-md animate-in slide-in-from-bottom-2 duration-300">
+                        <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-8 pb-6 border-b border-border/50">
+                            <div className="flex flex-wrap items-center gap-3">
+                                <span className="bg-destructive text-destructive-foreground text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-sm">
                                     通報: {group.reports.length}件
                                 </span>
-                                <span className="text-xs text-zinc-400">
+                                <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
                                     最終通報: {formatDate(group.reports[0].created_at)}
                                 </span>
                             </div>
@@ -79,50 +82,57 @@ export default async function AdminReportsPage() {
                                 'use server'
                                 await deletePost(group.postId)
                             }}>
-                                <button className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1.5 px-3 rounded transition-colors shadow-sm">
+                                <button className="bg-destructive text-destructive-foreground text-[11px] font-black uppercase tracking-widest py-2.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-destructive/20 active:scale-95">
                                     投稿を削除
                                 </button>
                             </form>
                         </div>
 
-                        <div className="bg-red-50 dark:bg-red-900/10 border-l-4 border-red-500 p-4 mb-4 rounded-r">
-                            <h4 className="text-sm font-bold text-red-800 dark:text-red-400 mb-2">通報理由リスト:</h4>
-                            <ul className="space-y-2">
-                                {group.reports.map((r: any) => (
-                                    <li key={r.id} className="text-sm text-red-700 dark:text-red-300 flex justify-between gap-4">
-                                        <span>• {r.reason}</span>
-                                        <span className="text-[10px] text-zinc-400 whitespace-nowrap">{formatDate(r.created_at)}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div className="bg-destructive/5 border border-destructive/10 p-6 rounded-2xl">
+                                <h4 className="text-[10px] font-black uppercase tracking-widest text-destructive mb-4">通報内容明細</h4>
+                                <ul className="space-y-3">
+                                    {group.reports.map((r: any) => (
+                                        <li key={r.id} className="text-sm text-foreground/80 flex justify-between gap-4 bg-background/50 p-3 rounded-lg border border-border/20">
+                                            <span className="font-medium">{r.reason}</span>
+                                            <span className="text-[9px] font-bold text-muted-foreground font-mono mt-0.5">{formatDate(r.created_at)}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
 
-                        <div className="border-t dark:border-zinc-800 pt-4">
-                            <span className="text-xs text-zinc-400 block mb-1 font-bold">対象の投稿内容:</span>
-                            <div className="text-sm text-zinc-600 dark:text-zinc-400 italic mb-2">
-                                {group.post?.name || 'Anonymous'} (ID:{group.post?.author_id || '????'})
-                            </div>
-                            <div className="text-sm whitespace-pre-wrap leading-relaxed">
-                                {group.post?.message}
-                            </div>
-                            {group.post?.thread_id && (
-                                <div className="mt-4">
-                                    <a
-                                        href={`/threads/${group.post.thread_id}`}
-                                        target="_blank"
-                                        className="text-xs text-blue-600 hover:underline flex items-center gap-1"
-                                    >
-                                        スレッドを確認する <span>&rarr;</span>
-                                    </a>
+                            <div className="space-y-4">
+                                <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">対象の投稿</h4>
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-2 text-xs font-bold">
+                                        <span className="text-foreground">{group.post?.name || '名無しさん'}</span>
+                                        <span className="bg-muted px-1.5 py-0.5 rounded text-[10px] text-muted-foreground/60">ID:{group.post?.author_id || '????'}</span>
+                                    </div>
+                                    <div className="text-sm bg-muted/30 p-4 rounded-xl border border-border/50 whitespace-pre-wrap leading-relaxed italic text-foreground/70">
+                                        {group.post?.message}
+                                    </div>
+                                    {group.post?.thread_id && (
+                                        <div className="flex justify-end pt-2">
+                                            <a
+                                                href={`/threads/${group.post.thread_id}`}
+                                                target="_blank"
+                                                className="text-[10px] font-black uppercase tracking-widest text-primary hover:translate-x-1 transition-transform flex items-center gap-1.5"
+                                            >
+                                                スレッドを確認 <span className="text-xs">→</span>
+                                            </a>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
+                            </div>
                         </div>
                     </div>
                 ))}
 
                 {groupedReports?.length === 0 && (
-                    <div className="bg-zinc-100 dark:bg-zinc-900 p-12 rounded-lg border-2 border-dashed border-zinc-200 dark:border-zinc-800 text-center">
-                        <p className="text-zinc-500">現在通報はありません。</p>
+                    <div className="bg-muted/20 p-20 rounded-[2rem] border-2 border-dashed border-border/50 text-center animate-in zoom-in-95 duration-500">
+                        <span className="text-4xl block mb-4 opacity-30">✨</span>
+                        <p className="text-lg font-bold text-muted-foreground">現在通報はありません。</p>
+                        <p className="text-sm text-muted-foreground/50 mt-1">平和なコミュニティですね。</p>
                     </div>
                 )}
             </div>

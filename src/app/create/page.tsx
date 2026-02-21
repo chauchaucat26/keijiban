@@ -50,13 +50,13 @@ export default function CreateThreadPage() {
     return (
         <div className="max-w-2xl mx-auto px-4 sm:px-0">
             <Link href="/" className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors mb-8 inline-flex items-center gap-2 group">
-                <span className="group-hover:-translate-x-1 transition-transform">←</span> Back to home
+                <span className="group-hover:-translate-x-1 transition-transform">←</span> トップに戻る
             </Link>
 
             <div className="bg-card text-card-foreground shadow-2xl border rounded-[2rem] p-8 sm:p-12 card-shadow animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="mb-10">
-                    <h1 className="text-3xl md:text-4xl font-black tracking-tighter mb-2">Start a Thread</h1>
-                    <p className="text-muted-foreground text-sm font-medium">Create a new discussion for the community.</p>
+                    <h1 className="text-3xl md:text-4xl font-black tracking-tighter mb-2">新規スレッド作成</h1>
+                    <p className="text-muted-foreground text-sm font-medium">コミュニティに新しい話題を投稿しましょう。</p>
                 </div>
 
                 {error && (
@@ -69,7 +69,7 @@ export default function CreateThreadPage() {
                     <div className="space-y-6">
                         <div className="space-y-2">
                             <label htmlFor="category" className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
-                                Category <span className="text-primary">*</span>
+                                カテゴリ <span className="text-primary">*</span>
                             </label>
                             <select
                                 name="category"
@@ -89,7 +89,7 @@ export default function CreateThreadPage() {
 
                         <div className="space-y-2">
                             <label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
-                                Thread Title <span className="text-primary">*</span>
+                                スレッドタイトル <span className="text-primary">*</span>
                             </label>
                             <input
                                 type="text"
@@ -99,14 +99,14 @@ export default function CreateThreadPage() {
                                 onChange={(e) => setTitle(e.target.value)}
                                 required
                                 maxLength={100}
-                                placeholder="Give it a catchy title..."
+                                placeholder="わかりやすいタイトルを入力"
                                 className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all shadow-sm placeholder:text-muted-foreground/40"
                             />
                         </div>
 
                         <div className="space-y-2">
                             <label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
-                                Your Handle (Optional)
+                                お名前 (任意)
                             </label>
                             <input
                                 type="text"
@@ -114,7 +114,7 @@ export default function CreateThreadPage() {
                                 id="name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                placeholder="Anonymous"
+                                placeholder="名無しさん"
                                 maxLength={30}
                                 className="w-full sm:w-2/3 rounded-xl border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all shadow-sm placeholder:text-muted-foreground/40"
                             />
@@ -122,7 +122,7 @@ export default function CreateThreadPage() {
 
                         <div className="space-y-2">
                             <label htmlFor="message" className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
-                                Content <span className="text-primary">*</span>
+                                本文 <span className="text-primary">*</span>
                             </label>
                             <textarea
                                 name="message"
@@ -132,7 +132,7 @@ export default function CreateThreadPage() {
                                 required
                                 rows={8}
                                 maxLength={200}
-                                placeholder="What's on your mind? No HTML/Markdown allowed."
+                                placeholder="HTMLやMarkdownは使えません。改行は反映されます。"
                                 className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all shadow-sm resize-none placeholder:text-muted-foreground/40"
                             />
                         </div>
@@ -147,12 +147,12 @@ export default function CreateThreadPage() {
                             {isSubmitting ? (
                                 <>
                                     <span className="animate-spin text-xl">⏳</span>
-                                    <span>Creating...</span>
+                                    <span>作成中...</span>
                                 </>
                             ) : (
                                 <>
                                     <span className="text-xl">🚀</span>
-                                    <span>Launch Thread</span>
+                                    <span>スレッドを作成する</span>
                                 </>
                             )}
                         </button>

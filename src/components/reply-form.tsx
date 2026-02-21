@@ -57,7 +57,7 @@ export function ReplyForm({ threadId }: { threadId: string }) {
             <div className="space-y-4">
                 <div className="space-y-1.5">
                     <label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
-                        Display Name (Optional)
+                        お名前 (任意)
                     </label>
                     <input
                         type="text"
@@ -65,14 +65,14 @@ export function ReplyForm({ threadId }: { threadId: string }) {
                         id="name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Anonymous"
+                        placeholder="名無しさん"
                         className="w-full sm:w-2/3 rounded-xl border border-input bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground/50"
                     />
                 </div>
 
                 <div className="space-y-1.5">
                     <label htmlFor="message" className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
-                        Your Message
+                        メッセージ
                     </label>
                     <textarea
                         name="message"
@@ -82,7 +82,7 @@ export function ReplyForm({ threadId }: { threadId: string }) {
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         maxLength={200}
-                        placeholder="Share your thoughts..."
+                        placeholder="内容を入力してください..."
                         className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground/50 resize-none"
                     />
                 </div>
@@ -90,14 +90,14 @@ export function ReplyForm({ threadId }: { threadId: string }) {
 
             <div className="flex items-center justify-between pt-2">
                 <p className="text-[10px] text-muted-foreground/60 max-w-[200px]">
-                    Please follow the community guidelines. Max 200 characters.
+                    200文字まで入力可能です。マナーを守って投稿しましょう。
                 </p>
                 <button
                     type="submit"
                     disabled={isSubmitting}
                     className="bg-primary text-primary-foreground font-bold py-2.5 px-8 rounded-full hover:opacity-90 transition-all disabled:opacity-50 shadow-md hover:shadow-lg active:scale-95 text-sm"
                 >
-                    {isSubmitting ? 'Posting...' : 'Post Reply'}
+                    {isSubmitting ? '投稿中...' : '書き込む'}
                 </button>
             </div>
         </form>

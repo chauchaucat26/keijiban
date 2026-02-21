@@ -41,7 +41,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
         <div className="max-w-4xl mx-auto">
             <div className="mb-10">
                 <Link href="/" className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors mb-6 inline-flex items-center gap-2 group">
-                    <span className="group-hover:-translate-x-1 transition-transform">←</span> Back to home
+                    <span className="group-hover:-translate-x-1 transition-transform">←</span> トップに戻る
                 </Link>
                 <div className="flex items-center gap-3 mb-4">
                     <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-secondary text-secondary-foreground">
@@ -72,7 +72,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                                                 ID:{post.author_id || '????'}
                                             </span>
                                             {post.author_id === threadOwnerId && (
-                                                <span className="text-[10px] bg-primary/10 text-primary font-black px-1.5 py-0.5 rounded uppercase tracking-tighter shadow-sm border border-primary/10">Host</span>
+                                                <span className="text-[10px] bg-primary/10 text-primary font-black px-1.5 py-0.5 rounded uppercase tracking-tighter shadow-sm border border-primary/10">スレ主</span>
                                             )}
                                         </div>
                                     </div>
@@ -95,9 +95,9 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                                 <Link
                                     href={`/report?post_id=${post.id}`}
                                     className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-destructive flex items-center gap-1.5 transition-all ml-auto group/report"
-                                    title="Report this post"
+                                    title="この投稿を通報する"
                                 >
-                                    <span className="text-xs group-hover/report:rotate-12 transition-transform">⚠️</span> Report
+                                    <span className="text-xs group-hover/report:rotate-12 transition-transform">⚠️</span> 報告する
                                 </Link>
                             </div>
                         </div>
@@ -115,8 +115,8 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
 
             <div className="mt-16 bg-muted/20 p-8 sm:p-12 rounded-[2rem] border border-border/50 card-shadow">
                 <div className="mb-8">
-                    <h3 className="text-2xl font-black tracking-tighter">Join the conversation</h3>
-                    <p className="text-muted-foreground text-sm mt-1">Be respectful and stay on topic.</p>
+                    <h3 className="text-2xl font-black tracking-tighter">スレッドに参加する</h3>
+                    <p className="text-muted-foreground text-sm mt-1">ルールを守って楽しく書き込みましょう。</p>
                 </div>
                 <ReplyForm threadId={thread.id} />
             </div>

@@ -48,10 +48,10 @@ export function ThreadList({ threads, title }: { threads: any[], title: string }
                             <div className="mt-auto pt-4 border-t border-border/50 flex justify-between items-center bg-transparent">
                                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
                                     <span className="text-sm">💬</span>
-                                    {thread.post_count ? `${thread.post_count} responses` : 'No replies yet'}
+                                    {thread.post_count ? `${thread.post_count} レス` : 'レスなし'}
                                 </div>
                                 <span className="text-primary text-xs font-bold inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                                    View <span className="text-base">→</span>
+                                    見る <span className="text-base">→</span>
                                 </span>
                             </div>
                         </div>
