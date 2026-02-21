@@ -31,13 +31,15 @@
         <div id="ad-container"></div>
         <!-- admax -->
     </div>
-    <script>
+    <script data-cfasync="false">
         const urlParams = new URLSearchParams(window.location.search);
         const adId = urlParams.get('adId');
         if (adId) {
             const script = document.createElement('script');
             script.src = `https://adm.shinobi.jp/s/${adId}`;
             script.async = false;
+            script.setAttribute("data-cfasync", "false");
+            script.charset = "utf-8";
             document.getElementById('ad-container').appendChild(script);
         }
     </script>
