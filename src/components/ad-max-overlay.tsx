@@ -27,7 +27,7 @@ export function AdMaxOverlay() {
     return (
         <>
             {/* admax mobile overlay */}
-            <Script id={`admax-push-overlay-${adId}`} strategy="afterInteractive">
+            <Script strategy="afterInteractive">
                 {`(window.admaxads = window.admaxads || []).push({admax_id: "${adId}", type: "overlay"});`}
             </Script>
             <Script
@@ -35,7 +35,6 @@ export function AdMaxOverlay() {
                 strategy="afterInteractive"
                 async
                 charSet="utf-8"
-                data-cfasync="false"
             />
             {/* admax */}
         </>
