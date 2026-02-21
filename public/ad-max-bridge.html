@@ -37,6 +37,7 @@
         if (adId) {
             const script = document.createElement('script');
             script.src = `https://adm.shinobi.jp/s/${adId}`;
+            script.async = false;
             document.getElementById('ad-container').appendChild(script);
         }
     </script>
