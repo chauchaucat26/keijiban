@@ -1,28 +1,49 @@
-<style>
-    body,
-    html {
-        margin: 0;
-        padding: 0;
-        background-color: transparent;
-        overflow: hidden;
-    }
+<!DOCTYPE html>
+<html>
 
-    .ad-wrapper {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-    }
+<head>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            overflow: hidden;
+        }
 
-    /* Simple wrapper for shinobi ad */
-    .ad-wrapper>div {
-        margin: 0 auto !important;
-    }
-</style>
+        .ad-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .ad-wrapper>div {
+            margin: 0 auto !important;
+        }
+    </style>
+</head>
 
 <body>
     <div class="ad-wrapper">
         <!-- admax -->
-        <script src="https://adm.shinobi.jp/s/0eca547512c9a3ecfd28bf2cc610967d"></script>
+        <div id="ad-container"></div>
         <!-- admax -->
     </div>
+    <script data-cfasync="false">
+        const urlParams = new URLSearchParams(window.location.search);
+        const adId = urlParams.get('adId');
+        if (adId) {
+            const script = document.createElement('script');
+            script.src = `https://adm.shinobi.jp/s/${adId}`;
+            script.async = false;
+            script.setAttribute("data-cfasync", "false");
+            script.charset = "utf-8";
+            document.getElementById('ad-container').appendChild(script);
+        }
+    </script>
 </body>
+
+</html>
