@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 export function AdMax() {
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
     useEffect(() => {
         const checkMobile = () => {
@@ -15,6 +15,10 @@ export function AdMax() {
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    if (isMobile === null) {
+        return <div className="flex justify-center my-8 min-h-[90px]" />;
+    }
 
     const src = isMobile ? '/ad-top-sp.html' : '/ad-top-pc.html';
     const width = isMobile ? '300' : '728';
