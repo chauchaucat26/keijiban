@@ -41,11 +41,11 @@ export function AdMaxInFeed() {
         );
     }
 
-    // --- PC版：srcDocを使ってdocument.writeエラーを回避 ---
     const pcAdHtml = `
       <!DOCTYPE html>
       <html>
         <head>
+          <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
           <style>
             body { margin: 0; display: flex; justify-content: center; overflow: hidden; background: transparent; }
           </style>
