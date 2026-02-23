@@ -1,13 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const PC_AD_SCRIPT_URL = 'https://adm.shinobi.jp/s/9502b5a3bbcb7abcb6925906064353c5';
 
 export function AdMaxInFeed() {
     const [isMobile, setIsMobile] = useState<boolean | null>(null);
-    const adRef = useRef<HTMLDivElement>(null);
-    const scriptLoaded = useRef(false);
 
     useEffect(() => {
         const checkMobile = () => {
@@ -20,21 +18,12 @@ export function AdMaxInFeed() {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    useEffect(() => {
-        if (isMobile === false && adRef.current && !scriptLoaded.current) {
-            scriptLoaded.current = true;
-            const script = document.createElement('script');
-            script.src = PC_AD_SCRIPT_URL;
-            script.charset = 'utf-8';
-            script.setAttribute('data-cfasync', 'false');
-            adRef.current.appendChild(script);
-        }
-    }, [isMobile]);
-
+    // 初期化待ち
     if (isMobile === null) {
         return <div className="flex justify-center my-6 min-h-[90px]" />;
     }
 
+    // --- SP版：既存の仕組みを維持 ---
     if (isMobile) {
         return (
             <div className="flex justify-center my-6 overflow-hidden min-h-[90px]">
@@ -52,9 +41,32 @@ export function AdMaxInFeed() {
         );
     }
 
+    // --- PC版：srcDocを使ってdocument.writeエラーを回避 ---
+    const pcAdHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { margin: 0; display: flex; justify-content: center; overflow: hidden; background: transparent; }
+          </style>
+        </head>
+        <body>
+          <script data-cfasync="false" charset="utf-8" src="${PC_AD_SCRIPT_URL}"></script>
+        </body>
+      </html>
+    `;
+
     return (
         <div className="flex justify-center my-6 min-h-[90px]">
-            <div ref={adRef} />
+            <iframe
+                srcDoc={pcAdHtml}
+                width="728"
+                height="90"
+                scrolling="no"
+                frameBorder="0"
+                style={{ border: 'none', overflow: 'hidden' }}
+                title="Advertisement PC"
+            />
         </div>
     );
 }
