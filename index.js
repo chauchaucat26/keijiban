@@ -76,6 +76,43 @@ client.once('ready', () => {
 });
 
 /* ============================================================
+ * エラーログ送信
+ *
+ * .env に LOG_CHANNEL_ID（ログを送りたいチャンネルのID）を設定してください。
+ * 未設定の場合はコンソール出力のみになります。
+ * ============================================================ */
+
+async function sendErrorLog(title, error, context = {}) {
+  const detail = error instanceof Error ? (error.stack || error.message) : String(error);
+  console.error(`❌ ${title}:`, detail);
+
+  if (!process.env.LOG_CHANNEL_ID) return;
+  if (!botLoggedIn) return; // ログイン前は送信できない
+
+  try {
+    const logChannel = await client.channels.fetch(process.env.LOG_CHANNEL_ID);
+    if (!logChannel || !logChannel.isTextBased()) return;
+
+    const contextLines = Object.entries(context)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join('\n');
+
+    // Discordのメッセージ上限(2000文字)を考慮して切り詰め
+    const detailTrimmed = detail.length > 1500 ? detail.slice(0, 1500) + '...(省略)' : detail;
+
+    await logChannel.send({
+      content:
+        `⚠️ **エラー発生: ${title}**\n` +
+        (contextLines ? `${contextLines}\n` : '') +
+        `\`\`\`${detailTrimmed}\`\`\``,
+    });
+  } catch (logSendError) {
+    // ログ送信自体の失敗はコンソールにのみ出す（無限ループ防止のためsendErrorLogは呼ばない）
+    console.error('❌ ログチャンネルへの送信に失敗:', logSendError.message);
+  }
+}
+
+/* ============================================================
  * ユーティリティ
  * ============================================================ */
 
@@ -134,7 +171,7 @@ async function addReactionRoleMapping(guildId, messageId, emojiKey, roleId) {
       [{ guild_id: guildId, message_id: messageId, emoji_key: emojiKey, role_id: roleId }],
       { onConflict: 'message_id,emoji_key' }
     );
-  return !error;
+  return { ok: !error, error };
 }
 
 async function removeReactionRoleMapping(messageId, emojiKey) {
@@ -143,7 +180,7 @@ async function removeReactionRoleMapping(messageId, emojiKey) {
     .delete()
     .eq('message_id', messageId)
     .eq('emoji_key', emojiKey);
-  return !error;
+  return { ok: !error, error };
 }
 
 async function getReactionRoleMapping(messageId, emojiKey) {
@@ -170,7 +207,7 @@ async function setMentionRole(guildId, roleId) {
   const { error } = await supabase
     .from('mention_roles')
     .upsert([{ guild_id: guildId, role_id: roleId }], { onConflict: 'guild_id' });
-  return !error;
+  return { ok: !error, error };
 }
 
 async function getMentionRole(guildId) {
@@ -207,7 +244,13 @@ client.on('messageCreate', async (message) => {
     const role = await message.guild.roles.fetch(roleId).catch(() => null);
     if (!role) return message.reply('そのロールが見つからなかったよ。');
 
-    const ok = await setMentionRole(message.guild.id, roleId);
+    const { ok, error } = await setMentionRole(message.guild.id, roleId);
+    if (!ok) {
+      await sendErrorLog('メンションロール設定の保存失敗', error, {
+        guild: message.guild.name,
+        roleId,
+      });
+    }
     return message.reply(
       ok
         ? `BOTがメンションされたら「${role.name}」を自動付与するように設定したよ！`
@@ -245,10 +288,21 @@ client.on('messageCreate', async (message) => {
         await targetMessage.react(parts[2]);
       }
     } catch (e) {
-      console.log('初期リアクション付与に失敗:', e.message);
+      await sendErrorLog('初期リアクション付与に失敗', e, {
+        messageId: targetMessageId,
+        emoji: parts[2],
+      });
     }
 
-    const ok = await addReactionRoleMapping(message.guild.id, targetMessageId, emojiKey, roleId);
+    const { ok, error } = await addReactionRoleMapping(message.guild.id, targetMessageId, emojiKey, roleId);
+    if (!ok) {
+      await sendErrorLog('リアクションロール登録失敗', error, {
+        guild: message.guild.name,
+        messageId: targetMessageId,
+        emojiKey,
+        roleId,
+      });
+    }
     return message.reply(
       ok
         ? 'リアクションロールを登録したよ！このリアクションを付けると対象ロールが付与されるよ。'
@@ -269,7 +323,14 @@ client.on('messageCreate', async (message) => {
     const emojiKey = extractEmojiKey(parts[2]);
     if (!emojiKey) return message.reply('絵文字が正しく認識できなかったよ。');
 
-    const ok = await removeReactionRoleMapping(targetMessageId, emojiKey);
+    const { ok, error } = await removeReactionRoleMapping(targetMessageId, emojiKey);
+    if (!ok) {
+      await sendErrorLog('リアクションロール解除失敗', error, {
+        guild: message.guild.name,
+        messageId: targetMessageId,
+        emojiKey,
+      });
+    }
     return message.reply(ok ? 'リアクションロールの登録を解除したよ。' : '解除に失敗しちゃった。');
   }
 
@@ -297,7 +358,11 @@ client.on('messageCreate', async (message) => {
           await message.member.roles.add(role);
           await message.reply(`「${role.name}」ロールを付与したよ！`);
         } catch (e) {
-          console.log('メンションロール付与失敗:', e.message);
+          await sendErrorLog('メンションロール付与失敗', e, {
+            user: `${message.author.tag} (${message.author.id})`,
+            role: role.id,
+            guild: message.guild.name,
+          });
           await message.reply('ロールの付与に失敗しちゃった…BOTの権限を確認してね。');
         }
       }
@@ -345,13 +410,13 @@ async function resolvePartials(reaction, user) {
   try {
     if (reaction.partial) await reaction.fetch();
   } catch (e) {
-    console.log('リアクションのfetch失敗:', e.message);
+    await sendErrorLog('リアクションのfetch失敗', e);
     return false;
   }
   try {
     if (user.partial) await user.fetch();
   } catch (e) {
-    console.log('ユーザーのfetch失敗:', e.message);
+    await sendErrorLog('ユーザーのfetch失敗', e);
     return false;
   }
   return true;
@@ -377,7 +442,11 @@ client.on('messageReactionAdd', async (reaction, user) => {
     await member.roles.add(role);
     console.log(`✅ ${user.tag} に ${role.name} を付与`);
   } catch (e) {
-    console.log('ロール付与失敗:', e.message);
+    await sendErrorLog('リアクションロール付与失敗', e, {
+      user: `${user.tag} (${user.id})`,
+      role: role.id,
+      messageId: message.id,
+    });
   }
 });
 
@@ -401,7 +470,11 @@ client.on('messageReactionRemove', async (reaction, user) => {
     await member.roles.remove(role);
     console.log(`🔻 ${user.tag} から ${role.name} を剥奪`);
   } catch (e) {
-    console.log('ロール剥奪失敗:', e.message);
+    await sendErrorLog('リアクションロール剥奪失敗', e, {
+      user: `${user.tag} (${user.id})`,
+      role: role.id,
+      messageId: message.id,
+    });
   }
 });
 
@@ -440,19 +513,36 @@ client.on('interactionCreate', async (interaction) => {
       await interaction.message.delete().catch(() => {});
       if (interaction.customId === 'approve_post') {
         const id = await getAndSaveVideoInfo(content);
-        const { data, error } = await supabase
-          .from('posts')
-          .insert([
-            {
+        if (!id) {
+          await sendErrorLog('動画情報の取得に失敗（掲載できず）', new Error('getAndSaveVideoInfoがnullを返した'), {
+            user: `${interaction.user.tag} (${interaction.user.id})`,
+            content,
+          });
+        } else {
+          const { data, error } = await supabase
+            .from('posts')
+            .insert([
+              {
+                title: id.title,
+                content: 'ここにテキストを入力してね',
+                thumbnail_url: id.thumbnailUrl,
+              },
+            ])
+            .select();
+
+          if (error) {
+            await sendErrorLog('Supabaseへの投稿保存失敗', error, {
+              user: `${interaction.user.tag} (${interaction.user.id})`,
               title: id.title,
-              content: 'ここにテキストを入力してね',
-              thumbnail_url: id.thumbnailUrl,
-            },
-          ])
-          .select();
+            });
+          }
+        }
       }
     } catch (error) {
-      console.log(error);
+      await sendErrorLog('動画掲載フロー処理失敗', error, {
+        user: `${interaction.user.tag} (${interaction.user.id})`,
+        customId: interaction.customId,
+      });
       await interaction.message.delete().catch(() => {});
     }
   }
@@ -520,10 +610,19 @@ async function getAndSaveVideoInfo(text) {
       });
       cloudinaryUrl = result.secure_url;
     } catch (error) {
+      await sendErrorLog('Cloudinaryアップロード失敗（1回目）', error, {
+        sourceImageUrl,
+      });
       if (match[1]) {
-        const retryUrl = `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
-        const retryResult = await cloudinary.uploader.upload(retryUrl, { public_id: `articles/${randomId}` });
-        cloudinaryUrl = retryResult.secure_url;
+        try {
+          const retryUrl = `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+          const retryResult = await cloudinary.uploader.upload(retryUrl, { public_id: `articles/${randomId}` });
+          cloudinaryUrl = retryResult.secure_url;
+        } catch (retryError) {
+          await sendErrorLog('Cloudinaryアップロード失敗（リトライ）', retryError, {
+            videoId: match[1],
+          });
+        }
       }
     }
 
@@ -533,7 +632,7 @@ async function getAndSaveVideoInfo(text) {
       thumbnailUrl: randomId,
     };
   } catch (error) {
-    console.error('Error:', error.message);
+    await sendErrorLog('動画情報取得処理失敗', error, { text });
     return null;
   }
 }
