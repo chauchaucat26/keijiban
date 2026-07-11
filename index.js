@@ -82,8 +82,34 @@ client.once('ready', () => {
  * 未設定の場合はコンソール出力のみになります。
  * ============================================================ */
 
+// error がError / Supabaseのエラーオブジェクト / 文字列 / その他のいずれでも
+// 人間が読める文字列に変換する
+function stringifyError(error) {
+  if (!error) return '(詳細不明のエラー)';
+  if (error instanceof Error) return error.stack || error.message;
+  if (typeof error === 'string') return error;
+
+  // Supabase(PostgrestError)などは message / details / hint / code を持つプレーンオブジェクト
+  if (typeof error === 'object') {
+    const parts = [];
+    if (error.message) parts.push(`message: ${error.message}`);
+    if (error.details) parts.push(`details: ${error.details}`);
+    if (error.hint) parts.push(`hint: ${error.hint}`);
+    if (error.code) parts.push(`code: ${error.code}`);
+    if (parts.length > 0) return parts.join('\n');
+
+    try {
+      return JSON.stringify(error, null, 2);
+    } catch {
+      return String(error);
+    }
+  }
+
+  return String(error);
+}
+
 async function sendErrorLog(title, error, context = {}) {
-  const detail = error instanceof Error ? (error.stack || error.message) : String(error);
+  const detail = stringifyError(error);
   console.error(`❌ ${title}:`, detail);
 
   if (!process.env.LOG_CHANNEL_ID) return;
@@ -94,7 +120,7 @@ async function sendErrorLog(title, error, context = {}) {
     if (!logChannel || !logChannel.isTextBased()) return;
 
     const contextLines = Object.entries(context)
-      .map(([key, value]) => `${key}: ${value}`)
+      .map(([key, value]) => `${key}: ${typeof value === 'object' ? JSON.stringify(value) : value}`)
       .join('\n');
 
     // Discordのメッセージ上限(2000文字)を考慮して切り詰め
