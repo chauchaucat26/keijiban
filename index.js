@@ -649,7 +649,7 @@ client.on('messageCreate', async (message) => {
     }
     return message.reply(
       ok
-        ? `「${voiceChannel.name}」に接続したら <#${notifyChannelId}> にこの文言で通知するように設定したよ！\n（\`{user}\`と書いた部分は入室した人のメンションに置き換わるよ）`
+        ? `「${voiceChannel.name}」が無人の状態から誰か1人目が接続したら <#${notifyChannelId}> にこの文言で通知するように設定したよ！\n（\`{user}\`と書いた部分は入室した人の表示名に置き換わるよ・メンションはされないよ）\n無人になったら「無人になりました」の通知も自動で届くよ。`
         : '設定の保存に失敗しちゃった…もう一回試してみて。'
     );
   }
@@ -701,7 +701,7 @@ client.on('messageCreate', async (message) => {
           '`!setvcrole <ボイスチャンネルID or #チャンネル> @ロール` … VC接続中のみロール付与\n' +
           '`!removevcrole <ボイスチャンネルID or #チャンネル>` … VC連携ロールの解除\n' +
           '`!listvcroles` … VC連携ロール一覧\n' +
-          '`!setvcnotify <VCチャンネルID> <通知先チャンネルID>` … 文言メッセージにリプライしてVC入室通知を設定（`{user}`が入室者に置換）\n' +
+          '`!setvcnotify <VCチャンネルID> <通知先チャンネルID>` … 文言メッセージにリプライしてVC入室通知を設定（無人→1人目の入室時のみ通知、`{user}`は表示名に置換・メンションなし、無人化時も自動通知）\n' +
           '`!removevcnotify <VCチャンネルID>` … VC入室通知の解除\n' +
           '`!listvcnotify` … VC入室通知一覧\n' +
           '`!help` … このヘルプを表示'
@@ -881,6 +881,30 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         }
       }
     }
+
+    // 無人になった通知（このチャンネルに通知設定がある場合のみ）
+    const oldNotification = await getVcNotification(oldChannelId);
+    if (oldNotification) {
+      const oldChannel = oldState.guild.channels.cache.get(oldChannelId);
+      const remainingCount = oldChannel && oldChannel.isVoiceBased() ? oldChannel.members.size : 0;
+      if (remainingCount === 0) {
+        const notifyChannel = await oldState.guild.channels
+          .fetch(oldNotification.notify_channel_id)
+          .catch(() => null);
+        if (notifyChannel && notifyChannel.isTextBased()) {
+          try {
+            await notifyChannel.send({
+              content: `📤 「${oldChannel ? oldChannel.name : 'ボイスチャンネル'}」は無人になりました。`,
+            });
+          } catch (e) {
+            await sendErrorLog('VC無人通知の送信失敗', e, {
+              channelId: oldChannelId,
+              notifyChannelId: oldNotification.notify_channel_id,
+            });
+          }
+        }
+      }
+    }
   }
 
   // 入室 / チャンネル移動: 新しいチャンネルに紐付いたロールを付与
@@ -902,20 +926,28 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
       }
     }
 
-    // 入室通知
+    // 入室通知（誰もいない状態から最初の1人が入った時だけ）
     const notification = await getVcNotification(newChannelId);
     if (notification) {
-      const notifyChannel = await newState.guild.channels.fetch(notification.notify_channel_id).catch(() => null);
-      if (notifyChannel && notifyChannel.isTextBased()) {
-        const text = notification.template.replaceAll('{user}', `<@${member.id}>`);
-        try {
-          await notifyChannel.send({ content: text });
-        } catch (e) {
-          await sendErrorLog('VC入室通知の送信失敗', e, {
-            user: `${member.user.tag} (${member.id})`,
-            channelId: newChannelId,
-            notifyChannelId: notification.notify_channel_id,
-          });
+      const newChannel = newState.guild.channels.cache.get(newChannelId);
+      const currentCount = newChannel && newChannel.isVoiceBased() ? newChannel.members.size : 0;
+      if (currentCount === 1) {
+        const notifyChannel = await newState.guild.channels.fetch(notification.notify_channel_id).catch(() => null);
+        if (notifyChannel && notifyChannel.isTextBased()) {
+          // {user} はメンションではなく表示名に置換（誰かに通知が飛ばないように）
+          const text = notification.template.replaceAll('{user}', member.displayName);
+          try {
+            await notifyChannel.send({
+              content: text,
+              allowedMentions: { parse: ['roles'] }, // ロールメンションのみ許可し、ユーザーへの意図しないメンションは防ぐ
+            });
+          } catch (e) {
+            await sendErrorLog('VC入室通知の送信失敗', e, {
+              user: `${member.user.tag} (${member.id})`,
+              channelId: newChannelId,
+              notifyChannelId: notification.notify_channel_id,
+            });
+          }
         }
       }
     }
