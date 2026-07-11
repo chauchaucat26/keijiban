@@ -689,23 +689,31 @@ client.on('messageCreate', async (message) => {
     return message.reply(lines.join('\n\n'));
   }
 
-  // !rolebothelp
-  if (content.startsWith('!rolebothelp')) {
-    if (!isAdmin(message.member)) {
-      return message.reply('この操作には管理者権限が必要だよ。');
+  // !help（誰でも使用可能。管理者にはコマンド一覧、一般ユーザーには使い方の概要を表示）
+  if (content.startsWith('!help')) {
+    if (isAdmin(message.member)) {
+      return message.reply(
+        '**ロール管理コマンド一覧（管理者専用）**\n' +
+          '`!setmentionrole @ロール` … BOTへのメンションでロールを付与\n' +
+          '`!addreactrole <メッセージID> <絵文字> @ロール` … リアクションでロール付与/解除\n' +
+          '`!removereactrole <メッセージID> <絵文字>` … リアクションロールの解除登録\n' +
+          '`!listreactroles` … リアクションロール一覧\n' +
+          '`!setvcrole <ボイスチャンネルID or #チャンネル> @ロール` … VC接続中のみロール付与\n' +
+          '`!removevcrole <ボイスチャンネルID or #チャンネル>` … VC連携ロールの解除\n' +
+          '`!listvcroles` … VC連携ロール一覧\n' +
+          '`!setvcnotify <VCチャンネルID> <通知先チャンネルID>` … 文言メッセージにリプライしてVC入室通知を設定（`{user}`が入室者に置換）\n' +
+          '`!removevcnotify <VCチャンネルID>` … VC入室通知の解除\n' +
+          '`!listvcnotify` … VC入室通知一覧\n' +
+          '`!help` … このヘルプを表示'
+      );
     }
     return message.reply(
-      '**ロール管理コマンド一覧**\n' +
-        '`!setmentionrole @ロール` … BOTへのメンションでロールを付与\n' +
-        '`!addreactrole <メッセージID> <絵文字> @ロール` … リアクションでロール付与/解除\n' +
-        '`!removereactrole <メッセージID> <絵文字>` … リアクションロールの解除登録\n' +
-        '`!listreactroles` … リアクションロール一覧\n' +
-        '`!setvcrole <ボイスチャンネルID or #チャンネル> @ロール` … VC接続中のみロール付与\n' +
-        '`!removevcrole <ボイスチャンネルID or #チャンネル>` … VC連携ロールの解除\n' +
-        '`!listvcroles` … VC連携ロール一覧\n' +
-        '`!setvcnotify <VCチャンネルID> <通知先チャンネルID>` … 文言メッセージにリプライしてVC入室通知を設定（`{user}`が入室者に置換）\n' +
-        '`!removevcnotify <VCチャンネルID>` … VC入室通知の解除\n' +
-        '`!listvcnotify` … VC入室通知一覧'
+      '**このBOTでできること**\n' +
+        '・BOTにメンションすると、設定されていればロールがもらえるよ\n' +
+        '・特定のリアクションを押すとロールがもらえたり、外すと剥奪されたりするよ\n' +
+        '・特定のボイスチャンネルに接続している間だけロールがもらえることがあるよ\n' +
+        '・特定のボイスチャンネルに入ると、決まったチャンネルに通知が届くことがあるよ\n\n' +
+        '設定変更は管理者だけができるよ。詳しいコマンド一覧が見たい場合は管理者に聞いてね！'
     );
   }
 
