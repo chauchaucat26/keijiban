@@ -15,7 +15,10 @@ import {
 import { v2 as cloudinary } from 'cloudinary';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+// ⚠️ service_role キーはRLSをバイパスする強い権限を持つため、
+// 絶対にフロントエンドやクライアント側のコードに含めないでください。
+// このBOTはサーバー側でのみ動作するため使用しています。
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 const ytRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
 const nicoRegex = /(?:nicovideo\.(?:jp|gay)\/watch\/)(sm\d+|nm\d+)/;
 
